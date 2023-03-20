@@ -75,16 +75,20 @@ class NeRFModule(pl.LightningModule):
 
     def on_validation_epoch_end(self):
         all_preds = torch.cat(self.validation_step_outputs)  # (num_pixels, 3)
+
+        # Switch to tackle pl sanity check
         if all_preds.shape[0] < (self.H * self.W):
             self.validation_step_outputs.clear()  # free memory
             pass
         else:
-            all_preds = all_preds.view(
-                self.C, self.H, self.W
-            )  # Shape expected by logger
+            img = torch.zeros(self.C, self.H, self.W)
+            for i in range(self.H):
+                img[:, i, :] = all_preds[
+                    self.W * i : self.W * (i + 1), :
+                ].T  # Shape expected by logger (C, H, W)
             self.validation_step_outputs.clear()  # free memory
 
-            img = all_preds.detach().cpu().numpy()
+            img = img.detach().cpu().numpy()
             img[0, :, :] = np.clip((img[0, :, :] + 1) / 2.0, 0, 1)
             img[1, :, :] = np.clip((img[1, :, :] + 1) / 2.0, 0, 1)
             img[2, :, :] = np.clip((img[2, :, :] + 1) / 2.0, 0, 1)
