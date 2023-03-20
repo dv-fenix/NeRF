@@ -31,8 +31,8 @@ class NeRFDataset(Dataset):
         y_sin, y_cos = [], []
 
         # Get relative coordinates in range (-1, 1)
-        x = scale(np.linspace(0, W - 1) / W)
-        y = scale(np.linspace(0, H - 1) / H)
+        x = scale(np.linspace(0, W - 1, num=W) / W)
+        y = scale(np.linspace(0, H - 1, num=H) / H)
 
         # Pre-compute pixel values -- reduces overall complexity of init
         if config.use_positional_encoding:
