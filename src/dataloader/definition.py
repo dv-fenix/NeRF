@@ -17,6 +17,7 @@ def to_tensor(data):
     return torch.tensor(data, device="cuda" if torch.cuda.is_available() else "cpu")
 
 
+# Randomized Fourier Features improve rendering quality
 def random_fourier_features(coord, dim):
     coord = np.expand_dims(coord, axis=1)
     weights = np.expand_dims(np.random.rand(dim), axis=0)
@@ -47,7 +48,6 @@ class NeRFDataset(Dataset):
         # Pre-compute pixel values -- reduces overall complexity of init
         if config.use_positional_encoding:
             # Using fourier features
-            # TODO: Implement randomized fourier features
             for exp in range(config.max_freq_exp):
                 freq = (2**exp) * np.pi
 

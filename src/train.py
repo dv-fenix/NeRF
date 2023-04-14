@@ -26,8 +26,14 @@ logger.addHandler(logging.StreamHandler())
 
 
 class NeRFModule(pl.LightningModule):
+    """NeRF Lightning Module
+    Args:
+        config (ArgumentParser): Config object
+        model (NeRF): NeRF model
+    """
+
     def __init__(self, config, model) -> None:
-        super().__init__()
+        super(NeRFModule, self).__init__()
 
         self.config = config
         self.model = model
@@ -45,6 +51,7 @@ class NeRFModule(pl.LightningModule):
         input_coord = input_coord.to(torch.float32)
         orig_color = orig_color.to(torch.float32)
 
+        # Forward pass
         gen_color = self.model(input_coord)
         loss = F.mse_loss(gen_color, orig_color)
 
@@ -88,6 +95,7 @@ class NeRFModule(pl.LightningModule):
                 ].T  # Shape expected by logger (C, H, W)
             self.validation_step_outputs.clear()  # free memory
 
+            # Convert output to image and log to tensorboard
             img = img.detach().cpu().numpy()
             img[0, :, :] = np.clip((img[0, :, :] + 1) / 2.0, 0, 1)
             img[1, :, :] = np.clip((img[1, :, :] + 1) / 2.0, 0, 1)
@@ -108,6 +116,9 @@ def _get_parser():
 
 
 def _trainer_init(config):
+    """
+    Initialize trainer callbacks and logger
+    """
     expt_name = os.path.basename(config.save_dir)
     log_dir = config.log_dir
 

@@ -5,6 +5,14 @@ import torch.nn as nn
 
 
 class PositionalEncoding(nn.Module):
+    """Positional encoding for 2D coordinates.
+    Args:
+        dim (int): Dimension of the positional encoding.
+
+    Returns:
+        torch.Tensor: Positional encoding of shape (batch_size, 2 * dim).
+    """
+
     def __init__(self, dim) -> None:
         super(PositionalEncoding, self).__init__()
         self.weights = nn.Parameter(torch.randn(1, dim), requires_grad=True)

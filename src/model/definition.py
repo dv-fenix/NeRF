@@ -5,6 +5,15 @@ from .modules import PositionalEncoding
 
 
 class NeRF(nn.Module):
+    """NeRF model.
+    Args:
+        config (ArgumentParser): Config object
+        inp_size (int): Input size of the positional encoding.
+
+    Returns:
+        torch.Tensor: Color of shape (batch_size, 3).
+    """
+
     def __init__(self, config, inp_size) -> None:
         super(NeRF, self).__init__()
         self.config = config
