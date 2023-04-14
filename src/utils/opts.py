@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-import configargparse
-
 
 def model_opts(parser):
     group = parser.add_argument_group("NeRF")
@@ -40,6 +38,13 @@ def model_opts(parser):
         type=float,
         default=1e-2,
         help="Learning rate for training the network.",
+    )
+
+    group.add(
+        "--learnable_positional_encoding",
+        "-learnable_positional_encoding",
+        action="store_true",
+        help="If passed, uses learnable positional encodings based on foruier features.",
     )
 
 
@@ -83,6 +88,13 @@ def data_opts(parser):
         "-use_positional_encoding",
         action="store_true",
         help="If passed, uses positional encodings based on foruier features.",
+    )
+
+    group.add(
+        "--use_random_fourier_features",
+        "-use_random_fourier_features",
+        action="store_true",
+        help="If passed, uses fixed random fourier features instead of positions.",
     )
 
     group.add(

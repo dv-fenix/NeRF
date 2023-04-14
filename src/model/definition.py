@@ -1,10 +1,13 @@
 import torch.nn as nn
 from collections import OrderedDict
 
+from .modules import PositionalEncoding
+
 
 class NeRF(nn.Module):
     def __init__(self, config, inp_size) -> None:
         super(NeRF, self).__init__()
+        self.config = config
 
         if config.activation == "relu":
             self.act = nn.ReLU()
@@ -12,6 +15,9 @@ class NeRF(nn.Module):
             self.act = nn.ReLU6()
         elif config.activation == "elu":
             self.act = nn.ELU()
+
+        if config.learnable_positional_encoding:
+            self.encode = PositionalEncoding(config.max_freq_exp)
 
         self.net = nn.Sequential(
             OrderedDict(
@@ -26,4 +32,6 @@ class NeRF(nn.Module):
         )
 
     def forward(self, pixel_coord):
+        if self.config.learnable_positional_encoding:
+            pixel_coord = self.encode(pixel_coord)
         return self.net(pixel_coord)

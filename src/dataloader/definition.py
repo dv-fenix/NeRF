@@ -17,6 +17,16 @@ def to_tensor(data):
     return torch.tensor(data, device="cuda" if torch.cuda.is_available() else "cpu")
 
 
+def random_fourier_features(coord, dim):
+    coord = np.expand_dims(coord, axis=1)
+    weights = np.expand_dims(np.random.rand(dim), axis=0)
+    freqs = coord * weights * 2 * np.pi
+
+    sin = np.sin(freqs.T)
+    cos = np.cos(freqs.T)
+    return sin, cos
+
+
 class NeRFDataset(Dataset):
     def __init__(self, config) -> None:
         super().__init__()
@@ -46,6 +56,9 @@ class NeRFDataset(Dataset):
 
                 y_sin.append(np.sin(freq * y))
                 y_cos.append(np.cos(freq * y))
+        elif config.use_random_fourier_features:
+            x_sin, x_cos = random_fourier_features(x, config.max_freq_exp)
+            y_sin, y_cos = random_fourier_features(y, config.max_freq_exp)
 
         self.pixel_encoding = []
         self.color_space = []
@@ -59,7 +72,10 @@ class NeRFDataset(Dataset):
                 b = scale(b)
 
                 positions = []
-                if not config.use_positional_encoding:
+                if (
+                    not config.use_positional_encoding
+                    and not config.use_random_fourier_features
+                ):
                     y_pos = scale(i / H)
                     x_pos = scale(j / W)
 

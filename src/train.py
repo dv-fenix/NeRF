@@ -141,7 +141,13 @@ def main():
         logger=logger,
         check_val_every_n_epoch=config.check_val_every_n_epoch,
     )
-    inp_size = 2 if not config.use_positional_encoding else (4 * config.max_freq_exp)
+    inp_size = (
+        2
+        if not config.use_positional_encoding
+        and not config.use_random_fourier_features
+        and not config.learnable_positional_encoding
+        else (4 * config.max_freq_exp)
+    )
     model = NeRFModule(config, NeRF(config, inp_size))
     trainer.fit(model=model)
 

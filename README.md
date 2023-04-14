@@ -40,7 +40,7 @@ python -m src.train \
     --epochs 400
 ```
 
-In order to run the experiment with position encodings, just add the `--use_positional_encoding` flag at the end of the script and change the expt directory accordingly.
+In order to run the experiment with learnable position encodings, just add the `--learnable_positional_encoding` flag at the end of the script and change the expt directory accordingly.
 
 ## Results
 
@@ -50,10 +50,29 @@ Training the NeRF without position encodings produces the following results (see
 <td> <img src="imgs/baseline.png" alt="w/o position encoding" style="width: 250px;"/> </td>
 </tr></table>
 
-Training the NeRF with position encodings produces the following results (see img on right).
+Training the NeRF with sinusoidal position encodings produces the following results (see img on right).
 <table><tr>
 <td> <img src="imgs/goku.jpg" alt="Original" style="width: 250px;"/> </td>
 <td> <img src="imgs/positional.png" alt="position encoding" style="width: 250px;"/> </td>
 </tr></table>
 
-As expected, the results of the second experiment are much sharper. One can further improve the rendering to look almost realistic by simply increasing the size of the model. My recommendation, do so intelligently and use techniques such as batch noramlization while scaling.
+### Update (15 April 2023)
+
+Training the NeRF with random fourier features produces the following results (see img on right).
+<table><tr>
+<td> <img src="imgs/goku.jpg" alt="Original" style="width: 250px;"/> </td>
+<td> <img src="imgs/random_fourier.png" alt="random_fourier" style="width: 250px;"/> </td>
+</tr></table>
+
+Training the NeRF with learnable position encodings produces the following results (see img middle). The img on the right is the same experiment, but with a larger volume of learnable encodings.
+<table><tr>
+<td> <img src="imgs/goku.jpg" alt="Original" style="width: 250px;"/> </td>
+<td> <img src="imgs/learned_positional_small.png" alt="learnable_positional_small" style="width: 250px;"/> </td>
+<td> <img src="imgs/learned_positional_large.png" alt="learnable_positional_large" style="width: 250px;"/> </td>
+</tr></table>
+
+## Remarks
+
+As expected, allowing the NeRF to learn it's own positional encodings improves the visual quality. I naively increased the number of such encodings to check the impact of that excercise on image quality. The result, slightly better visual renderings, but not perfect.
+
+A combination of learned positional encodings along with a slightly larger network should result in realistic outputs. I was too lazy to try that out since I would not have been able to train that network on my Macbook efficiently. Feel free to try that out. My recommendation, do so intelligently and use techniques such as batch noramlization while scaling.
